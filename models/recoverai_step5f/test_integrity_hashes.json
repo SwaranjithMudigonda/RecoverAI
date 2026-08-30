@@ -1,0 +1,8 @@
+{
+  "test_dataset": "fe52ba8be239102fb6152c1bd86dafbf71bf69e185d216baacec01558907b43e",
+  "lgbm_model": "ca968b7756caec185e70b562cda34445289cea4d0a4bce14cf7b0c5a0b1068e7",
+  "isotonic_calibrator": "8bda9ffdbb4b281a6569c5436f7ccf3cdb721da2971d1029540fa0809d596817",
+  "feature_list": "8462f5c4a83e53254ddebed80e458508fc719df19e900481b1c396e64e935f4d",
+  "categorical_features": "23debd9970ae23d9cf439587590dc2d38584c7b1dfa59488fcaba74176fc9b9a",
+  "model_config": "a7cb181a291bf95924ae86b4d9949de9c32b59ba907692ae29a00e8254672cc9"
+}

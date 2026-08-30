@@ -1,0 +1,6 @@
+{
+  "ML_Policy": "LightGBM S-Learner + Isotonic Calibrator + Multi-Factor Expected Utility Argmax",
+  "Always_NUDGE": "Selects NUDGE if valid, else STOP",
+  "Rule_Based": "SOFT_DECLINE -> RETRY; FUNDS_ISSUE/CUSTOMER_ACTION/GENERIC -> NUDGE; HARD_DECLINE -> STOP (with Guardrail Overrides)",
+  "Simulation_Policy_Upper_Bound": "Ground-truth simulator expected utility argmax (Oracle within simulation)"
+}

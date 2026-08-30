@@ -1,0 +1,23 @@
+RECOVERAI REVIEW PACKAGE - FILE MANIFEST
+============================================================
+
+README.md | SHA256: 77986fb97909d7415b2bc2e03d8cc14d3b6338e306e4ab9b5cb95921d6a40b73
+docs/technical_architecture.md | SHA256: 6a5ec2ef7c4b7da0203001e688eb574ea7a576e7e96136e524e546ee3f0c4b94
+docs/final_results_summary.md | SHA256: 31dcf7f1cf1b6aee7cc44ca7049dfa6fa91da3e80f56dfead55a48bf250b5ff6
+docs/final_security_and_safety_summary.md | SHA256: 5c1c4e13bf0895139dba4223d3a9fdb3cd30fee423a251ef20eeb18ee1ff4a1c
+docs/presentation_outline.md | SHA256: 38e40535bf301e3042290d10414743f374bc176a8fb281bd8e9e41ea2394a0fc
+docs/step7d_integration_report.md | SHA256: eec6035fea7b078c84bd72022b3d411da948392b1518ddaa8cedd5d5aae963cb
+docs/step7e_final_release_report.md | SHA256: acc88571c6412a8025f76d4324f4190dedc0197b818ee71332244ea9fa935df4
+models/recoverai_step5e/feature_list.json | SHA256: 8462f5c4a83e53254ddebed80e458508fc719df19e900481b1c396e64e935f4d
+models/recoverai_step5e/categorical_features.json | SHA256: 23debd9970ae23d9cf439587590dc2d38584c7b1dfa59488fcaba74176fc9b9a
+models/recoverai_step5e/model_config.json | SHA256: a7cb181a291bf95924ae86b4d9949de9c32b59ba907692ae29a00e8254672cc9
+models/recoverai_step5f/test_evaluation_metrics.json | SHA256: 812ad91aeda91d520832682f7bd53f433c10699c160984885081cecb374d2c74
+data/processed/step5f_policy_summary.csv | SHA256: 57d684e6e584f92f7502c244b926e3af0584abc7fb1a5ba6da070db66262774f
+src/recoverai_agent.py | SHA256: 2585fd25516f94ed9a316a28fc98a2df940af70969ebb8f324f230eed81d190d
+src/api/server.py | SHA256: 6850709b78922e788682e97efe604c201287364a7746ae9c0bdf66382f446a5b
+src/batch/run_batch.py | SHA256: bb12f639a1668386cc7b84beea07e8069765e3ea4a781a82337ac8a25ed7a12b
+dashboard/index.html | SHA256: 4e9dd4fc8f0ccb47d1cf31ea629fb306dfded7ab1f9e5c392f30061c96b42096
+dashboard/app.js | SHA256: d6f6f0be2b8d95e0ba9d170a56ad193eafd31cfebaa72f2250c48a5722e5c75d
+dashboard/styles.css | SHA256: b8f445fcea0cc03ee2a97bf9356a588447affda1f0b5d1eb0d73305fff2e9bd7
+tests/test_step7d_integration.py | SHA256: 9ee24cf46b7e74e540fa7951914daf4899d37cfb1836dd23cb64763a83ded702
+tests/test_step7e_release_verification.py | SHA256: f45db5e37db8a924064b2b67d32a4b552e4de320b7f154db655ae7ad419cb67e

@@ -1,0 +1,18 @@
+[
+  "payment_type",
+  "payment_value",
+  "payment_installments",
+  "previous_order_count",
+  "previous_payment_count",
+  "previous_success_count",
+  "previous_cancelled_count",
+  "historical_payment_success_rate",
+  "historical_average_payment",
+  "customer_tenure_before_payment",
+  "order_frequency_before_payment",
+  "failure_category",
+  "failure_reason",
+  "hours_since_failure",
+  "recovery_attempt_number",
+  "action"
+]

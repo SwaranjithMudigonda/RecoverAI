@@ -1,0 +1,29 @@
+{
+  "validation_raw_metrics": {
+    "brier_score": 0.13954541250117458,
+    "ece": 0.019303974597692813,
+    "log_loss": 0.4318506033782265,
+    "roc_auc": 0.8475498547235361,
+    "mean_predicted_probability": 0.28290171166722344,
+    "positive_rate": 0.2941700044503783,
+    "sample_count": 2247
+  },
+  "validation_calibrated_metrics": {
+    "brier_score": 0.13664111916456625,
+    "ece": 2.141885541499801e-17,
+    "log_loss": 0.4215531627006664,
+    "roc_auc": 0.8519982906406856,
+    "mean_predicted_probability": 0.2941700044503783,
+    "positive_rate": 0.2941700044503783,
+    "sample_count": 2247
+  },
+  "train_raw_metrics": {
+    "brier_score": 0.12813345500789028,
+    "ece": 0.031557172888264415,
+    "log_loss": 0.40032256644834774,
+    "roc_auc": 0.8755774314469149,
+    "mean_predicted_probability": 0.2949352307307318,
+    "positive_rate": 0.29481494887340515,
+    "sample_count": 11051
+  }
+}

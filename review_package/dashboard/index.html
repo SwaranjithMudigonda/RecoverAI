@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecoverAI — AI Revenue Recovery Orchestration Engine</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Mandatory Simulation Disclaimer Banner (Permanently Visible) -->
+  <header class="disclaimer-banner" id="disclaimerBanner">
+    <div class="banner-content">
+      <div class="banner-title">
+        <span class="warning-icon">⚠️</span>
+        <strong>SIMULATED ENVIRONMENT — PROTOTYPE ONLY — NO REAL TRANSACTIONS EXECUTED</strong>
+      </div>
+      <p class="banner-subtext">
+        All failure reasons, recovery actions and recovery outcomes used for model development and policy evaluation are simulated.
+        Olist provides real transaction context but does not provide gateway decline or recovery labels.
+      </p>
+    </div>
+  </header>
+
+  <div class="app-container">
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav">
+      <div class="nav-brand">
+        <div class="logo-badge">AI</div>
+        <span class="brand-name">RecoverAI</span>
+        <span class="brand-track">Track 03 • AI Revenue Recovery</span>
+      </div>
+      <div class="nav-provenance" id="navProvenance">
+        <span class="prov-label">Model SHA-256:</span>
+        <code class="prov-hash" id="modelHashNav">Loading...</code>
+        <span class="prov-status active">FROZEN</span>
+      </div>
+    </nav>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+
+      <!-- Column 1: Interactive Input Context Panel -->
+      <section class="card input-panel">
+        <div class="card-header">
+          <h2>1. Payment Context Simulator</h2>
+          <span class="card-subtitle">Configure failed transaction context</span>
+        </div>
+
+        <!-- Preset Quick Selector Buttons -->
+        <div class="preset-group">
+          <span class="preset-label">Quick Presets:</span>
+          <div class="preset-buttons">
+            <button type="button" class="btn btn-preset active" onclick="loadPreset('soft')">Soft Decline</button>
+            <button type="button" class="btn btn-preset" onclick="loadPreset('boleto')">Boleto Payment</button>
+            <button type="button" class="btn btn-preset" onclick="loadPreset('hard')">Hard Decline</button>
+            <button type="button" class="btn btn-preset" onclick="loadPreset('auth')">Auth Failed</button>
+          </div>
+        </div>
+
+        <form id="contextForm" onsubmit="event.preventDefault(); handleRecommend();">
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="payment_type">Payment Method</label>
+              <select id="payment_type" required onchange="updateFailureReasons()">
+                <option value="credit_card" selected>credit_card</option>
+                <option value="debit_card">debit_card</option>
+                <option value="boleto">boleto</option>
+                <option value="voucher">voucher</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="payment_value">Payment Value (BRL)</label>
+              <input type="number" id="payment_value" step="0.01" min="0.01" value="250.00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="payment_installments">Installments</label>
+              <input type="number" id="payment_installments" min="1" max="24" value="1" required>
+            </div>
+
+            <div class="form-group">
+              <label for="failure_category">Failure Category</label>
+              <select id="failure_category" required onchange="updateFailureReasons()">
+                <option value="SOFT_DECLINE" selected>SOFT_DECLINE</option>
+                <option value="FUNDS_ISSUE">FUNDS_ISSUE</option>
+                <option value="CUSTOMER_ACTION_REQUIRED">CUSTOMER_ACTION_REQUIRED</option>
+                <option value="HARD_DECLINE">HARD_DECLINE</option>
+                <option value="GENERIC_DECLINE">GENERIC_DECLINE</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="failure_reason">Decline Reason</label>
+              <select id="failure_reason" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="recovery_attempt_number">Attempt Number</label>
+              <input type="number" id="recovery_attempt_number" min="1" max="10" value="1" required>
+            </div>
+
+            <div class="form-group">
+              <label for="hours_since_failure">Hours Since Failure</label>
+              <input type="number" id="hours_since_failure" step="0.1" min="0" value="1.0" required>
+            </div>
+
+            <div class="form-group">
+              <label for="previous_order_count">Prev. Orders</label>
+              <input type="number" id="previous_order_count" min="0" value="2" required>
+            </div>
+
+            <div class="form-group">
+              <label for="previous_payment_count">Prev. Payments</label>
+              <input type="number" id="previous_payment_count" min="0" value="2" required>
+            </div>
+
+            <div class="form-group">
+              <label for="previous_success_count">Prev. Successes</label>
+              <input type="number" id="previous_success_count" min="0" value="2" required>
+            </div>
+
+            <div class="form-group">
+              <label for="previous_cancelled_count">Prev. Cancels</label>
+              <input type="number" id="previous_cancelled_count" min="0" value="0" required>
+            </div>
+
+            <div class="form-group">
+              <label for="historical_payment_success_rate">Hist. Success Rate</label>
+              <input type="number" id="historical_payment_success_rate" step="0.01" min="0" max="1" value="1.00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="historical_average_payment">Hist. Avg Ticket (BRL)</label>
+              <input type="number" id="historical_average_payment" step="0.01" min="0" value="250.00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="customer_tenure_before_payment">Customer Tenure (Days)</label>
+              <input type="number" id="customer_tenure_before_payment" min="0" value="30" required>
+            </div>
+
+            <div class="form-group">
+              <label for="order_frequency_before_payment">Order Frequency (Days)</label>
+              <input type="number" id="order_frequency_before_payment" step="0.1" min="0" value="15.0" required>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-submit">
+            <span>Run Orchestration Recommendation</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Column 2: Agent Recommendation & Decision Output -->
+      <section class="card output-panel">
+        <div class="card-header">
+          <h2>2. Agent Decision & Utility Analysis</h2>
+          <span class="card-subtitle">Real-time policy recommendation via REST API</span>
+        </div>
+
+        <div class="decision-hero" id="decisionHero">
+          <div class="hero-header">
+            <span class="hero-label">Recommended Action:</span>
+            <div class="action-badge badge-retry" id="selectedActionBadge">INITIALIZING</div>
+          </div>
+          <p class="selection-reason" id="selectionReasonText">Connecting to RecoverAI REST API...</p>
+
+          <div class="hero-metrics">
+            <div class="hero-metric">
+              <span class="m-label">Calibrated Probability</span>
+              <span class="m-val highlight" id="selectedProbVal">0.0%</span>
+            </div>
+            <div class="hero-metric">
+              <span class="m-label">Simulated Expected Utility</span>
+              <span class="m-val highlight" id="selectedUtilityVal">R$ 0.00</span>
+            </div>
+            <div class="hero-metric">
+              <span class="m-label">Fallback Status</span>
+              <span class="m-val" id="fallbackStatusVal">FALSE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Probabilities & Utilities Grid -->
+        <div class="viz-grid">
+
+          <div class="viz-card">
+            <h3>Calibrated Recovery Probabilities</h3>
+            <div class="bar-chart" id="probBarChart">
+              <!-- Rendered via JavaScript -->
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <h3>Simulated Expected Utility (BRL)</h3>
+            <div class="bar-chart" id="utilityBarChart">
+              <!-- Rendered via JavaScript -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Safety Guardrails Status Grid -->
+        <div class="guardrails-panel">
+          <h3>Safety Guardrails Monitor (Step 6B Rules)</h3>
+          <div class="guardrails-grid" id="guardrailsGrid">
+            <!-- Rendered via JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Full-Width Section: Frozen Step 5F Policy Evaluation Report -->
+      <section class="card full-width-card policy-panel">
+        <div class="card-header">
+          <h2>3. Frozen Step 5F Simulated Policy Evaluation</h2>
+          <span class="card-subtitle font-mono" id="evalSourceLabel">Artifact-driven evaluation stats (Source: models/recoverai_step5f/test_evaluation_metrics.json & data/processed/step5f_policy_summary.csv)</span>
+        </div>
+
+        <div class="policy-stats-grid" id="policyStatsGrid">
+          <div class="stat-card stat-ml">
+            <span class="stat-title">ML Policy (LightGBM S-Learner)</span>
+            <span class="stat-value" id="statMlNetUtility">Loading...</span>
+            <span class="stat-sub" id="statMlSub">Loading...</span>
+          </div>
+
+          <div class="stat-card stat-lift">
+            <span class="stat-title">Net Utility Lift vs Rule-Based</span>
+            <span class="stat-value" id="statLiftVal">Loading...</span>
+            <span class="stat-sub" id="statLiftSub">Loading...</span>
+          </div>
+
+          <div class="stat-card stat-upper">
+            <span class="stat-title">Upper Bound Capture</span>
+            <span class="stat-value" id="statUpperCapture">Loading...</span>
+            <span class="stat-sub" id="statUpperSub">Loading...</span>
+          </div>
+
+          <div class="stat-card stat-rb">
+            <span class="stat-title">Rule-Based Baseline</span>
+            <span class="stat-value" id="statRbNetUtility">Loading...</span>
+            <span class="stat-sub" id="statRbSub">Loading...</span>
+          </div>
+        </div>
+
+        <!-- ML Performance Metrics Box -->
+        <div class="ml-metrics-box" id="mlMetricsBox">
+          <h3>ML Model Calibration & Discrimination Metrics</h3>
+          <div class="ml-metrics-grid">
+            <div class="ml-m-item"><span class="ml-m-label">ROC-AUC:</span> <strong id="mlRocAuc">Loading...</strong></div>
+            <div class="ml-m-item"><span class="ml-m-label">Brier Score:</span> <strong id="mlBrier">Loading...</strong></div>
+            <div class="ml-m-item"><span class="ml-m-label">Expected Calibration Error (ECE):</span> <strong id="mlEce">Loading...</strong></div>
+            <div class="ml-m-item"><span class="ml-m-label">Log Loss:</span> <strong id="mlLogLoss">Loading...</strong></div>
+            <div class="ml-m-item"><span class="ml-m-label">Test Sample Count:</span> <strong id="mlSamples">Loading...</strong></div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="policy-table">
+            <thead>
+              <tr>
+                <th>Policy Strategy</th>
+                <th>Recovered Revenue (BRL)</th>
+                <th>Net Policy Utility (BRL)</th>
+                <th>Recovery Rate (%)</th>
+                <th>Net Utility Lift vs RB</th>
+                <th>% Lift vs RB</th>
+                <th>Regret vs Upper Bound</th>
+                <th>Guardrail Violations</th>
+              </tr>
+            </thead>
+            <tbody id="policyTableBody">
+              <!-- Rendered dynamically from Step 5F artifacts -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Full-Width Section: Local Audit Log Status -->
+      <section class="card full-width-card audit-panel">
+        <div class="card-header">
+          <h2>4. Audit Log Status — Local Read-Only</h2>
+          <span class="card-subtitle font-mono">Local read-only status of data/processed/recoverai_agent_audit_log.csv (Zero Credential Leakage)</span>
+        </div>
+
+        <div class="audit-controls">
+          <button type="button" class="btn btn-secondary" onclick="checkAuditStatus()">Refresh Audit Status</button>
+          <span class="audit-status" id="auditStatus">Status: Log File Ready</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Request ID</th>
+                <th>Status</th>
+                <th>Payment Method</th>
+                <th>Value (BRL)</th>
+                <th>Failure Reason</th>
+                <th>Selected Action</th>
+                <th>Utility (BRL)</th>
+                <th>Selection Rationale</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody">
+              <tr>
+                <td colspan="9" style="text-align:center; color: var(--text-muted);">
+                  Audit log stream active locally. Open data/processed/recoverai_agent_audit_log.csv for raw logs.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>RecoverAI Architecture • Razorpay AI Builder Internship 2026 • Track 03 AI Revenue Recovery</p>
+      <p class="footer-disclaimer">All failure reasons, recovery actions, and outcomes are simulated. Preceding code & model artifacts are 100% frozen.</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

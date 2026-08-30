@@ -1,0 +1,146 @@
+{
+  "experiment": "Supplementary Model Comparison \u2014 LightGBM vs Logistic Regression",
+  "status": "SUPPLEMENTARY \u2014 Does NOT replace frozen Step 5F results",
+  "model_a": {
+    "name": "LightGBM + Isotonic Calibration (Frozen Step 5E/5F)",
+    "test_metrics": {
+      "roc_auc": 0.6878573307307889,
+      "brier_score": 0.22269510860789482,
+      "ece": 0.02644392067873896,
+      "log_loss": 0.6513521285877792,
+      "sample_count": 2283
+    }
+  },
+  "model_b_calibrated": {
+    "name": "Logistic Regression + Separate Isotonic Calibration",
+    "test_metrics": {
+      "brier_score": 0.2207156935853475,
+      "ece": 0.033843957905349636,
+      "log_loss": 0.6294937069467832,
+      "roc_auc": 0.6855506456401087,
+      "sample_count": 2283
+    }
+  },
+  "model_b_raw": {
+    "name": "Logistic Regression (Raw, Uncalibrated)",
+    "test_metrics": {
+      "brier_score": 0.22257134055364727,
+      "ece": 0.04601974668122769,
+      "log_loss": 0.6346087346696303,
+      "roc_auc": 0.688000266498917,
+      "sample_count": 2283
+    }
+  },
+  "model_b_validation_metrics": {
+    "raw": {
+      "brier_score": 0.1678676930173441,
+      "ece": 0.03881905089498017,
+      "log_loss": 0.5096974592328275,
+      "roc_auc": 0.7690972255343178,
+      "sample_count": 2247
+    },
+    "calibrated": {
+      "brier_score": 0.16389015362521447,
+      "ece": 1.966483149981363e-17,
+      "log_loss": 0.4968525912635427,
+      "roc_auc": 0.7747680632157704,
+      "sample_count": 2247
+    }
+  },
+  "metric_comparison": {
+    "roc_auc": {
+      "model_a": 0.6878573307307889,
+      "model_b_calibrated": 0.6855506456401087,
+      "model_b_raw": 0.688000266498917,
+      "absolute_difference": -0.002306685090680216,
+      "relative_difference_pct": -0.33534353529816463,
+      "better_model": "Model A"
+    },
+    "brier_score": {
+      "model_a": 0.22269510860789482,
+      "model_b_calibrated": 0.2207156935853475,
+      "model_b_raw": 0.22257134055364727,
+      "absolute_difference": -0.0019794150225473095,
+      "relative_difference_pct": -0.8888453073446342,
+      "better_model": "Model B"
+    },
+    "ece": {
+      "model_a": 0.02644392067873896,
+      "model_b_calibrated": 0.033843957905349636,
+      "model_b_raw": 0.04601974668122769,
+      "absolute_difference": 0.007400037226610676,
+      "relative_difference_pct": 27.983888306548817,
+      "better_model": "Model A"
+    },
+    "log_loss": {
+      "model_a": 0.6513521285877792,
+      "model_b_calibrated": 0.6294937069467832,
+      "model_b_raw": 0.6346087346696303,
+      "absolute_difference": -0.02185842164099605,
+      "relative_difference_pct": -3.3558532599545057,
+      "better_model": "Model B"
+    }
+  },
+  "policy_comparison": {
+    "model_a_net_utility_brl": 179015.96,
+    "model_b_net_utility_brl": 154694.06,
+    "model_a_recovered_revenue_brl": 184987.96,
+    "model_b_recovered_revenue_brl": 158177.56,
+    "model_a_recovery_rate_pct": 52.29960578186597,
+    "model_b_recovery_rate_pct": 45.1598773543583,
+    "model_a_regret_brl": 160.80000000001746,
+    "model_b_regret_brl": 24482.70000000001,
+    "rule_based_net_utility_brl": 173068.41999999998,
+    "upper_bound_net_utility_brl": 179176.76
+  },
+  "bootstrap_confidence_intervals": {
+    "lr_net_utility": {
+      "mean": 154605.22580000001,
+      "ci_95_low": 139119.89225,
+      "ci_95_high": 170716.21949999998
+    },
+    "rb_net_utility": {
+      "mean": 172979.60031,
+      "ci_95_low": 155879.5995,
+      "ci_95_high": 192161.16075
+    },
+    "lr_recovered_revenue": {
+      "mean": 158087.10880000002,
+      "ci_95_low": 142570.72525,
+      "ci_95_high": 174181.182
+    },
+    "lr_recovery_rate_pct": {
+      "mean": 45.17359795195478,
+      "ci_95_low": 43.02373343199956,
+      "ci_95_high": 47.18223712023743
+    },
+    "abs_revenue_lift_brl": {
+      "mean": -18948.50551,
+      "ci_95_low": -28201.619250000025,
+      "ci_95_high": -11189.91724999999
+    },
+    "pct_revenue_lift": {
+      "mean": -10.672369159389156,
+      "ci_95_low": -15.178092564107725,
+      "ci_95_high": -6.443587320125695
+    },
+    "net_utility_lift_brl": {
+      "mean": -18374.374509999998,
+      "ci_95_low": -27653.98775000001,
+      "ci_95_high": -10621.26500000002
+    },
+    "regret_brl": {
+      "mean": 24531.50284,
+      "ci_95_low": 16975.56475000003,
+      "ci_95_high": 33600.19224999997
+    }
+  },
+  "reproducibility_verified": true,
+  "frozen_artifacts_verified": true,
+  "seeds": {
+    "training_seed": 42,
+    "validation_seed": 42,
+    "crn_seed": 999,
+    "bootstrap_seed": 42
+  }
+}
