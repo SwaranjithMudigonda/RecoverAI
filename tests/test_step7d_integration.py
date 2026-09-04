@@ -51,9 +51,8 @@ AGENT_SCRIPT_PATH = str(project_root / "src" / "recoverai_agent.py")
 SERVER_SCRIPT_PATH = str(project_root / "src" / "api" / "server.py")
 BATCH_SCRIPT_PATH = str(project_root / "src" / "batch" / "run_batch.py")
 
-DASHBOARD_DIR = str(project_root / "dashboard")
-HTML_PATH = os.path.join(DASHBOARD_DIR, "index.html")
-JS_PATH = os.path.join(DASHBOARD_DIR, "app.js")
+FRONTEND_API_PATH = str(project_root / "frontend" / "src" / "lib" / "api.ts")
+FRONTEND_FROZEN_DATA_PATH = str(project_root / "frontend" / "src" / "data" / "frozenEvaluation.ts")
 
 # HARDCODED TRUSTED REFERENCE SHA-256 HASHES (Step 4E-7C Master Reference)
 TRUSTED_REFERENCE_HASHES = {
@@ -358,13 +357,22 @@ def run_step7d_integration_tests():
     tests_passed += 1
     print("  Test 16 (Memory-Bounded Batch Streaming in Isolated Temp Dir): PASSED")
 
-    # Test 17: Dashboard Integration & Static Metrics
-    with open(JS_PATH, "r", encoding="utf-8") as f_js:
-        js_src = f_js.read()
-    assert "renderClientFallback" not in js_src, "Fake ML fallback found in app.js!"
-    assert "FROZEN_STEP5F_ARTIFACT_DATA" in js_src
+    # Test 17: Frontend Integration & Static Metrics
+    assert os.path.exists(FRONTEND_API_PATH), f"Frontend API client missing: {FRONTEND_API_PATH}"
+    assert os.path.exists(FRONTEND_FROZEN_DATA_PATH), f"Frontend frozen evaluation data missing: {FRONTEND_FROZEN_DATA_PATH}"
+
+    with open(FRONTEND_API_PATH, "r", encoding="utf-8") as f_api:
+        api_src = f_api.read()
+    assert "renderClientFallback" not in api_src, "Fake ML fallback found in api.ts!"
+    assert "/api/v1/recommend" in api_src, "Frontend API missing real /api/v1/recommend backend integration!"
+    assert "/api/v1/health" in api_src, "Frontend API missing real /api/v1/health backend integration!"
+
+    with open(FRONTEND_FROZEN_DATA_PATH, "r", encoding="utf-8") as f_frozen:
+        frozen_src = f_frozen.read()
+    assert "FROZEN_STEP5F_ARTIFACT_DATA" in frozen_src, "FROZEN_STEP5F_ARTIFACT_DATA missing in frontend!"
+
     tests_passed += 1
-    print("  Test 17 (Dashboard Integration & Static Metric Loading): PASSED")
+    print("  Test 17 (Frontend Integration & Static Metric Loading): PASSED")
 
     # Test 18: Preceding Artifacts SHA-256 Integrity Verification (vs Master Reference Hashes)
     current_hashes = get_current_artifact_hashes()

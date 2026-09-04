@@ -1,0 +1,26 @@
+{
+  "_notice": "Razorpay Test Mode official card numbers for failure scenario simulation. Placeholders only.",
+  "scenarios": {
+    "insufficient_fund": {
+      "network": "Visa",
+      "card_number": "4100280000080001",
+      "expected_error_reason": "insufficient_fund",
+      "expected_error_source": "customer",
+      "expected_error_step": "payment_authorization"
+    },
+    "authentication_failed": {
+      "network": "Visa",
+      "card_number": "4100280000000009",
+      "expected_error_reason": "authentication_failed",
+      "expected_error_source": "customer",
+      "expected_error_step": "payment_authentication"
+    },
+    "payment_cancelled": {
+      "network": "Visa",
+      "card_number": "4100280000070002",
+      "expected_error_reason": "payment_cancelled",
+      "expected_error_source": "customer",
+      "expected_error_step": "payment_authentication"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "description": "Index of genuine Razorpay Test Mode payment samples",
+  "last_updated": "2026-09-02 14:53:00 UTC",
+  "sample_count": 1,
+  "samples": [
+    {
+      "payment_id": "pay_TXCuQesPPrjb0B",
+      "scenario_tag": "card_generic_decline",
+      "file": "01_card_declined.json",
+      "amount_paise": 25000,
+      "method": "card",
+      "error_reason": "payment_failed",
+      "error_source": "gateway",
+      "mapped_category": "GENERIC_DECLINE",
+      "captured_at": "2026-09-02 14:53:00 UTC"
+    }
+  ]
+}

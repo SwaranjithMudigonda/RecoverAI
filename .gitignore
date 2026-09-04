@@ -1,9 +1,20 @@
 __pycache__/
 .venv/
 .env
+.env.*
+!.env.example
+config/razorpay_test_cards.json
+*test_cards*.json
+!config/razorpay_test_cards.example.json
 node_modules/
 build/
 dist/
 data/raw/
-data/processed/
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/recoverai_recovery_cases.csv
+!data/processed/recoverai_ml_training_cases.csv
+!data/processed/recoverai_ml_validation_cases.csv
+!data/processed/recoverai_ml_test_cases.csv
+!data/processed/step5f_policy_summary.csv
 

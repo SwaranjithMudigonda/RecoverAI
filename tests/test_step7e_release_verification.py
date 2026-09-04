@@ -66,9 +66,8 @@ AGENT_SCRIPT_PATH = str(project_root / "src" / "recoverai_agent.py")
 SERVER_SCRIPT_PATH = str(project_root / "src" / "api" / "server.py")
 BATCH_SCRIPT_PATH = str(project_root / "src" / "batch" / "run_batch.py")
 
-DASHBOARD_DIR = str(project_root / "dashboard")
-HTML_PATH = os.path.join(DASHBOARD_DIR, "index.html")
-JS_PATH = os.path.join(DASHBOARD_DIR, "app.js")
+FRONTEND_APP_PATH = str(project_root / "frontend" / "src" / "App.tsx")
+FRONTEND_API_PATH = str(project_root / "frontend" / "src" / "lib" / "api.ts")
 
 
 def get_current_hashes():
@@ -195,8 +194,14 @@ def run_step7e_release_verification():
     tests_passed += 1
     print("  Test 7 (Model Provenance Hash Consistency Audit): PASSED")
 
-    # Test 8: Zero External Network / Gateway Execution Audit
-    source_files = [AGENT_SCRIPT_PATH, SERVER_SCRIPT_PATH, BATCH_SCRIPT_PATH, JS_PATH]
+    # Test 8: Zero External Network / Gateway Execution Audit & Frontend API Integration Audit
+    assert os.path.exists(FRONTEND_API_PATH), f"Frontend API integration file missing: {FRONTEND_API_PATH}"
+    with open(FRONTEND_API_PATH, "r", encoding="utf-8") as f:
+        api_src = f.read()
+    assert "/api/v1/recommend" in api_src, "Frontend API missing /api/v1/recommend endpoint integration!"
+    assert "/api/v1/health" in api_src, "Frontend API missing /api/v1/health endpoint integration!"
+
+    source_files = [AGENT_SCRIPT_PATH, SERVER_SCRIPT_PATH, BATCH_SCRIPT_PATH, FRONTEND_API_PATH]
     forbidden_terms = ["razorpay", "stripe", "checkout.com", "twilio", "sendgrid"]
     for s_file in source_files:
         with open(s_file, "r", encoding="utf-8") as f:
@@ -207,14 +212,25 @@ def run_step7e_release_verification():
     tests_passed += 1
     print("  Test 8 (Zero External Network / Gateway Execution Audit): PASSED")
 
-    # Test 9: Simulation Disclaimer Verification
-    with open(HTML_PATH, "r", encoding="utf-8") as f:
-        html_src = f.read()
-    assert "SIMULATED ENVIRONMENT" in html_src
-    assert "PROTOTYPE ONLY" in html_src
-    assert "NO REAL TRANSACTIONS EXECUTED" in html_src
+    # Test 9: Active React Frontend Application & Simulation Disclaimer Verification
+    assert os.path.exists(FRONTEND_APP_PATH), f"Active React frontend file missing: {FRONTEND_APP_PATH}"
+    with open(FRONTEND_APP_PATH, "r", encoding="utf-8") as f:
+        app_src = f.read()
+    assert "export function App()" in app_src, "React App component export missing from App.tsx!"
+    assert "useRecommendation" in app_src, "useRecommendation hook missing from App.tsx!"
+    assert "LiveDecisionCenter" in app_src, "LiveDecisionCenter section missing from App.tsx!"
+    assert "Header" in app_src, "Header component missing from App.tsx!"
+
+    header_path = str(project_root / "frontend" / "src" / "components" / "Header.tsx")
+    assert os.path.exists(header_path), f"Header component missing: {header_path}"
+    with open(header_path, "r", encoding="utf-8") as f:
+        header_src = f.read()
+    assert "SIMULATED ENVIRONMENT" in header_src, "Missing SIMULATED ENVIRONMENT disclaimer!"
+    assert "PROTOTYPE ONLY" in header_src, "Missing PROTOTYPE ONLY disclaimer!"
+    assert "NO REAL TRANSACTIONS EXECUTED" in header_src, "Missing NO REAL TRANSACTIONS EXECUTED disclaimer!"
+
     tests_passed += 1
-    print("  Test 9 (Simulation Disclaimer Verification in Dashboard UI): PASSED")
+    print("  Test 9 (Active React Frontend Application Verification): PASSED")
 
     # Test 10: End-to-End Pipeline Reproducibility (10 Consecutive Runs)
     decisions = []

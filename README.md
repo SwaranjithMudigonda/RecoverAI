@@ -63,8 +63,20 @@ RecoverAI replaces static rule-based retries with a **Calibrated Machine Learnin
 3. **ML Inference & Calibration (Step 5E/6C):** Evaluates non-blocked candidate actions through LightGBM S-Learner and Isotonic Calibrator to yield calibrated probability $P = \text{Calibrator}(\text{LightGBM}(X, A))$.
 4. **Net Expected Utility Optimization (Step 6C):** Computes expected net utility:
    $$EU(A, X) = P(A, X) \cdot V - C(A)$$
-   where $V$ is transaction value and $C(A)$ represents action execution cost ($C_{\text{RETRY}} = 1.50$, $C_{\text{NUDGE}} = 0.50$, $C_{\text{ESCALATE}} = 5.00$, $C_{\text{STOP}} = 0.00$).
+   where $V$ is transaction value and $C(A)$ represents action execution cost ($C_{\text{RETRY}} = 0.50$, $C_{\text{NUDGE}} = 1.50$, $C_{\text{ESCALATE}} = 15.00$, $C_{\text{STOP}} = 0.00$).
 5. **Action Selection & Audit Logging (Step 6D):** Selects $\arg\max_A EU(A, X)$ and writes atomic, thread-safe CSV audit records.
+
+---
+
+## Direct Alignment with Track 03 "THE BAR"
+
+| Razorpay "THE BAR" Requirement | RecoverAI Architectural Solution |
+|---|---|
+| **1. Measured Money Recovered Across a Batch** | Interactive **Batch Stream** runner in the React frontend + streaming CLI (`run_batch.py`) calculating real-time gross vs net recovered revenue (R$ / ₹), recovery rate %, and one-click CSV export. |
+| **2. Compliant Escalation** | Explicit `ESCALATE` action modeled with real operational costs (R$ 15.00 / ₹ 225.00) and priority routing for high-ticket / high-affinity customer contexts. |
+| **3. Deterministic Stopping Rules** | Dedicated `STOP` action ($C=0.00$) + strict pre-inference guardrails (`GR01`–`GR06`) blocking retries on hard declines, stolen cards, and velocity caps ($> 3$ attempts). |
+| **4. Enterprise Audit Trail** | Request-level UUID tracking, 14-artifact SHA-256 cryptographic provenance, thread-safe file-locked CSV logging, and 10/10 automated release verification tests. |
+| **5. Razorpay India Market Mode** | Built-in **`🇮🇳 INR (₹)`** market switcher in the frontend header converting BRL to Indian Rupee context with direct mapping to UPI, RuPay, and Razorpay Payment Links. |
 
 ---
 
@@ -161,8 +173,15 @@ python -m uvicorn src.api.server:app --host 127.0.0.1 --port 8000
 python src/batch/run_batch.py --input data/processed/recoverai_ml_test_cases.csv --output data/processed/recoverai_batch_output.csv
 ```
 
-### 3. Launch Interactive Dashboard
-Open `dashboard/index.html` in any web browser.
+### 3. Launch Interactive Frontend
+1. Start the FastAPI backend from the repository root (see Step 1).
+2. Start the React frontend from the `frontend/` directory:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+3. Open the Vite development URL displayed in your terminal (typically `http://localhost:5173`).
 
 ### 4. Execute Full Verification Test Suites
 ```bash

@@ -125,6 +125,11 @@
 
 ---
 
+### Slide 12.5: Track 03 Scope Alignment & Roadmap
+- **Built:** Payment recovery — the track brief's own first example direction ("Payment degradation → root cause → recovery action") — fully built and evaluated against all four parts of The Bar (measured recovery, compliant escalation, stopping rules, audit trail).
+- **Architecture, not a script:** The decision loop (candidate actions → guardrails → calibrated P(recovery) → net expected utility → argmax with a hard STOP floor) is schema-agnostic.
+- **Roadmap (explicitly not built, scoped honestly):** Checkout drop-off recovery (`NUDGE`/`STOP` on cart context), failed-subscription mandate retries (`RETRY` + GR05/GR06 as-is), B2B receivables promise-to-pay tracking (`ESCALATE` → collections routing + a new `PROMISE_LOGGED` action), Hinglish voice recovery (a channel choice downstream of the existing action output). See `docs/track_alignment_and_roadmap.md`.
+
 ### Slide 13: Conclusion & Final Deliverables
 - **Project Verdict:** `RECOVERAI RELEASE VERIFIED & COMPLETE`
 - **Completed Deliverables:**

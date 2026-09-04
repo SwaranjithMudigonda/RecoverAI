@@ -257,23 +257,31 @@ def run_model_comparison_tests():
     tests_passed += 1
     print("  Test 13 (Existing API Behavior Unchanged): PASSED")
 
-    # ---- Test 14: Existing Dashboard Behavior Unchanged ----
-    dashboard_html = str(project_root / "dashboard" / "index.html")
-    dashboard_js = str(project_root / "dashboard" / "app.js")
-    assert os.path.exists(dashboard_html)
-    assert os.path.exists(dashboard_js)
-    with open(dashboard_html, "r", encoding="utf-8") as f:
-        html_content = f.read()
-    assert "SIMULATED ENVIRONMENT" in html_content
-    assert "PROTOTYPE ONLY" in html_content
-    with open(dashboard_js, "r", encoding="utf-8") as f:
-        js_content = f.read()
-    assert "FROZEN_STEP5F_ARTIFACT_DATA" in js_content
-    # Ensure no Model B references leaked into dashboard
-    assert "logistic_regression" not in js_content.lower()
-    assert "model_b" not in js_content.lower()
+    # ---- Test 14: Active Frontend Behavior Unchanged ----
+    header_tsx = str(project_root / "frontend" / "src" / "components" / "Header.tsx")
+    frozen_ts = str(project_root / "frontend" / "src" / "data" / "frozenEvaluation.ts")
+    api_ts = str(project_root / "frontend" / "src" / "lib" / "api.ts")
+
+    assert os.path.exists(header_tsx), f"Header component missing: {header_tsx}"
+    assert os.path.exists(frozen_ts), f"Frozen evaluation data missing: {frozen_ts}"
+    assert os.path.exists(api_ts), f"Frontend API client missing: {api_ts}"
+
+    with open(header_tsx, "r", encoding="utf-8") as f:
+        header_content = f.read()
+    assert "SIMULATED ENVIRONMENT" in header_content
+    assert "PROTOTYPE ONLY" in header_content
+
+    with open(frozen_ts, "r", encoding="utf-8") as f:
+        frozen_content = f.read()
+    assert "FROZEN_STEP5F_ARTIFACT_DATA" in frozen_content
+
+    with open(api_ts, "r", encoding="utf-8") as f:
+        api_content = f.read()
+    # Ensure no Model B references leaked into runtime frontend API code
+    assert "logistic_regression" not in api_content.lower()
+    assert "model_b" not in api_content.lower()
     tests_passed += 1
-    print("  Test 14 (Existing Dashboard Behavior Unchanged): PASSED")
+    print("  Test 14 (Active Frontend Behavior Unchanged): PASSED")
 
     # ---- Summary ----
     print("\n" + "=" * 70)
