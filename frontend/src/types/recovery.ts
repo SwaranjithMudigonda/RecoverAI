@@ -30,6 +30,7 @@ export interface PaymentContext {
 export interface ActionDetail {
   guardrail_result: 'PASSED' | 'BLOCKED';
   guardrail_rule_ids: string[];
+  raw_probability?: number;
   probability: number;
   utility: number;
   cost: number;

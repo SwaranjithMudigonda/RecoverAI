@@ -36,6 +36,7 @@ export const DecisionHero: React.FC<DecisionHeroProps> = ({
   const decision = recommendation?.decision;
   const actions = recommendation?.actions;
   const selectedAction = decision?.selected_action;
+  const selectedRawProb = selectedAction && actions ? actions[selectedAction]?.raw_probability : undefined;
 
   // Calculate guardrail passed count
   const allActionKeys = ['RETRY', 'NUDGE', 'ESCALATE', 'STOP'] as const;
@@ -231,7 +232,7 @@ export const DecisionHero: React.FC<DecisionHeroProps> = ({
                   {decision ? formatPercent(decision.recovery_probability) : '0.0%'}
                 </div>
                 <div className="text-[11px] text-[#8C9BAE] mt-0.5">
-                  Recovery Probability
+                  {selectedRawProb !== undefined ? `Raw ML: ${formatPercent(selectedRawProb)}` : 'Empirical Calibrated'}
                 </div>
               </div>
 

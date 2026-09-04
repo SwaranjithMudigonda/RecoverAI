@@ -12,6 +12,88 @@ interface PaymentInputFormProps {
   onSubmit: () => void;
 }
 
+interface NumberFieldProps {
+  label: string;
+  value: number;
+  onChange: (val: number) => void;
+  isFloat?: boolean;
+  min?: number;
+  max?: number;
+  disabled?: boolean;
+}
+
+const NumberField: React.FC<NumberFieldProps> = ({
+  label,
+  value,
+  onChange,
+  isFloat = false,
+  min = 0,
+  max,
+  disabled,
+}) => {
+  const [localVal, setLocalVal] = useState<string>(String(value));
+  const isFocused = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!isFocused.current) {
+      setLocalVal(String(value));
+    }
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    // Allow empty string so user can completely delete the number without 0 sticking around
+    setLocalVal(text);
+
+    if (text.trim() === '') {
+      return;
+    }
+
+    const parsed = isFloat ? parseFloat(text) : parseInt(text, 10);
+    if (!isNaN(parsed)) {
+      if (max !== undefined && parsed > max) {
+        onChange(max);
+      } else {
+        onChange(parsed);
+      }
+    }
+  };
+
+  const handleBlur = () => {
+    isFocused.current = false;
+    if (localVal.trim() === '' || isNaN(Number(localVal))) {
+      setLocalVal(String(min));
+      onChange(min);
+    } else {
+      const parsed = isFloat ? parseFloat(localVal) : parseInt(localVal, 10);
+      let clamped = parsed;
+      if (min !== undefined && clamped < min) clamped = min;
+      if (max !== undefined && clamped > max) clamped = max;
+      setLocalVal(String(clamped));
+      onChange(clamped);
+    }
+  };
+
+  return (
+    <div>
+      <label className="block text-[11px] text-[#8C9BAE] mb-1">{label}</label>
+      <input
+        type="text"
+        inputMode={isFloat ? 'decimal' : 'numeric'}
+        value={localVal}
+        onFocus={() => {
+          isFocused.current = true;
+        }}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        disabled={disabled}
+        className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2.5 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
+        required
+      />
+    </div>
+  );
+};
+
 export const PaymentInputForm: React.FC<PaymentInputFormProps> = ({
   context,
   activePreset,
@@ -142,33 +224,23 @@ export const PaymentInputForm: React.FC<PaymentInputFormProps> = ({
                 </select>
               </div>
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Value (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  value={context.payment_value}
-                  onChange={e => onUpdateField('payment_value', parseFloat(e.target.value) || 0.01)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2.5 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Value (R$)"
+                value={context.payment_value}
+                onChange={v => onUpdateField('payment_value', v)}
+                isFloat
+                min={0.01}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Installments</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="24"
-                  value={context.payment_installments}
-                  onChange={e => onUpdateField('payment_installments', parseInt(e.target.value, 10) || 1)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2.5 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Installments"
+                value={context.payment_installments}
+                onChange={v => onUpdateField('payment_installments', v)}
+                min={1}
+                max={24}
+                disabled={isSubmitting}
+              />
             </div>
           </div>
 
@@ -178,115 +250,75 @@ export const PaymentInputForm: React.FC<PaymentInputFormProps> = ({
               Customer Profile
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Orders</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={context.previous_order_count}
-                  onChange={e => onUpdateField('previous_order_count', parseInt(e.target.value, 10) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Orders"
+                value={context.previous_order_count}
+                onChange={v => onUpdateField('previous_order_count', v)}
+                min={0}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Payments</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={context.previous_payment_count}
-                  onChange={e => onUpdateField('previous_payment_count', parseInt(e.target.value, 10) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Payments"
+                value={context.previous_payment_count}
+                onChange={v => onUpdateField('previous_payment_count', v)}
+                min={0}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Successes</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={context.previous_success_count}
-                  onChange={e => onUpdateField('previous_success_count', parseInt(e.target.value, 10) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Successes"
+                value={context.previous_success_count}
+                onChange={v => onUpdateField('previous_success_count', v)}
+                min={0}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Cancels</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={context.previous_cancelled_count}
-                  onChange={e => onUpdateField('previous_cancelled_count', parseInt(e.target.value, 10) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Cancels"
+                value={context.previous_cancelled_count}
+                onChange={v => onUpdateField('previous_cancelled_count', v)}
+                min={0}
+                disabled={isSubmitting}
+              />
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Success Rate</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="1"
-                  value={context.historical_payment_success_rate}
-                  onChange={e => onUpdateField('historical_payment_success_rate', parseFloat(e.target.value) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Success Rate"
+                value={context.historical_payment_success_rate}
+                onChange={v => onUpdateField('historical_payment_success_rate', v)}
+                isFloat
+                min={0}
+                max={1}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Avg Ticket (R$)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={context.historical_average_payment}
-                  onChange={e => onUpdateField('historical_average_payment', parseFloat(e.target.value) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Avg Ticket (R$)"
+                value={context.historical_average_payment}
+                onChange={v => onUpdateField('historical_average_payment', v)}
+                isFloat
+                min={0}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Tenure (Days)</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={context.customer_tenure_before_payment}
-                  onChange={e => onUpdateField('customer_tenure_before_payment', parseInt(e.target.value, 10) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Tenure (Days)"
+                value={context.customer_tenure_before_payment}
+                onChange={v => onUpdateField('customer_tenure_before_payment', v)}
+                min={0}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Freq (Days)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={context.order_frequency_before_payment}
-                  onChange={e => onUpdateField('order_frequency_before_payment', parseFloat(e.target.value) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Freq (Days)"
+                value={context.order_frequency_before_payment}
+                onChange={v => onUpdateField('order_frequency_before_payment', v)}
+                isFloat
+                min={0}
+                disabled={isSubmitting}
+              />
             </div>
           </div>
 
@@ -312,33 +344,23 @@ export const PaymentInputForm: React.FC<PaymentInputFormProps> = ({
                 </select>
               </div>
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Attempt #</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={context.recovery_attempt_number}
-                  onChange={e => onUpdateField('recovery_attempt_number', parseInt(e.target.value, 10) || 1)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2.5 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Attempt #"
+                value={context.recovery_attempt_number}
+                onChange={v => onUpdateField('recovery_attempt_number', v)}
+                min={1}
+                max={10}
+                disabled={isSubmitting}
+              />
 
-              <div>
-                <label className="block text-[11px] text-[#8C9BAE] mb-1">Hours Elapsed</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={context.hours_since_failure}
-                  onChange={e => onUpdateField('hours_since_failure', parseFloat(e.target.value) || 0)}
-                  disabled={isSubmitting}
-                  className="w-full bg-[#16202C] border border-[#263545] rounded-md px-2.5 py-1.5 text-xs text-[#F3F5F7] font-mono focus:border-blue-500 focus:outline-none"
-                  required
-                />
-              </div>
+              <NumberField
+                label="Hours Elapsed"
+                value={context.hours_since_failure}
+                onChange={v => onUpdateField('hours_since_failure', v)}
+                isFloat
+                min={0}
+                disabled={isSubmitting}
+              />
             </div>
 
             <div>
