@@ -1,15 +1,51 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { fetchRecommendation } from '../lib/api';
 import { PRESETS } from '../data/presets';
 import type { PaymentContext, RecommendationResponse, RequestStatus } from '../types/recovery';
 
+const STORAGE_KEY = 'recoverai_recommendation_state_v1';
+
+function getStoredState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.warn('Unable to retrieve RecoverAI state from storage:', err);
+  }
+  return null;
+}
+
 export function useRecommendation() {
-  const [context, setContext] = useState<PaymentContext>(PRESETS.soft);
-  const [activePreset, setActivePreset] = useState<string>('');
-  const [status, setStatus] = useState<RequestStatus>('IDLE');
-  const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(null);
+  const initial = getStoredState();
+
+  const [context, setContext] = useState<PaymentContext>(initial?.context || PRESETS.soft);
+  const [activePreset, setActivePreset] = useState<string>(initial?.activePreset ?? '');
+  const [status, setStatus] = useState<RequestStatus>(
+    initial?.recommendation ? 'SUCCESS' : (initial?.status === 'REQUESTING' ? 'IDLE' : (initial?.status || 'IDLE'))
+  );
+  const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(initial?.recommendation ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [lastRequestId, setLastRequestId] = useState<string>('NONE');
+  const [lastRequestId, setLastRequestId] = useState<string>(initial?.lastRequestId ?? 'NONE');
+
+  // Sync changes to localStorage so refreshing the page preserves all results and inputs
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          context,
+          activePreset,
+          status,
+          recommendation,
+          lastRequestId,
+        })
+      );
+    } catch (err) {
+      console.warn('Unable to persist RecoverAI state to storage:', err);
+    }
+  }, [context, activePreset, status, recommendation, lastRequestId]);
 
   const executeRecommendation = useCallback(async (ctxToUse?: PaymentContext) => {
     const targetCtx = ctxToUse || context;
