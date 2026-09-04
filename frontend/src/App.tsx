@@ -10,10 +10,12 @@ import { ActionComparison } from './sections/ActionComparison';
 import { RecoveryPipeline } from './sections/RecoveryPipeline';
 import { BatchRunner } from './sections/BatchRunner';
 import { TrustAndEvidencePage } from './sections/TrustAndEvidencePage';
+import { useCurrency } from './lib/utils';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'decide' | 'batch' | 'trust'>('decide');
   const { isOnline } = useHealth();
+  const { currency } = useCurrency();
   const {
     context,
     activePreset,
@@ -39,7 +41,7 @@ export function App() {
       <SimulationBanner />
 
       {/* Main Content Viewport */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main key={currency} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'decide' ? (
           <div className="space-y-8">
             {/* 1. DOMINANT PRIMARY DECISION HERO (LiveDecisionCenter) */}
