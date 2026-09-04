@@ -49,7 +49,7 @@ export const DecisionHero: React.FC<DecisionHeroProps> = ({
   const handleCopyCurl = () => {
     const curlCommand = `curl -X POST http://127.0.0.1:8000/api/v1/recommend \\
   -H "Content-Type: application/json" \\
-  -d '{"payment_type":"credit_card","payment_value":${paymentValue.toFixed(2)},"payment_installments":1,"previous_order_count":1,"previous_payment_count":1,"previous_success_count":1,"previous_cancelled_count":0,"historical_payment_success_rate":1.0,"historical_average_payment":${paymentValue.toFixed(2)},"customer_tenure_before_payment":30,"order_frequency_before_payment":0.03,"failure_category":"SOFT_DECLINE","failure_reason":"transient_issuer_system_timeout","hours_since_failure":1.0,"recovery_attempt_number":1}'`;
+  -d '{"payment_type":"credit_card","payment_value":${paymentValue.toFixed(2)},"payment_installments":1,"previous_order_count":1,"previous_payment_count":1,"previous_success_count":1,"previous_cancelled_count":0,"historical_payment_success_rate":1.0,"historical_average_payment":${paymentValue.toFixed(2)},"customer_tenure_before_payment":30,"order_frequency_before_payment":0.03,"failure_category":"SOFT_DECLINE","failure_reason":"network_error","hours_since_failure":1.0,"recovery_attempt_number":1}'`;
 
     navigator.clipboard.writeText(curlCommand);
     setCopied(true);
