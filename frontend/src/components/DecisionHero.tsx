@@ -202,12 +202,12 @@ export const DecisionHero: React.FC<DecisionHeroProps> = ({
                 RECOMMENDED ACTION
               </div>
               <div className={`text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight uppercase ${getActionColor(selectedAction)}`}>
-                {selectedAction || 'IDLE'}
+                {selectedAction || 'READY'}
               </div>
               <div className="text-xs text-[#8C9BAE] font-mono mt-1 flex items-center gap-2">
                 <span>Cost-Optimal Strategy</span>
                 <span>•</span>
-                <span className="text-blue-400 font-semibold">Max Net Expected Utility</span>
+                <span className="text-blue-400 font-semibold">{decision ? 'Max Net Expected Utility' : 'Awaiting Scenario Evaluation'}</span>
               </div>
             </div>
 
@@ -254,8 +254,8 @@ export const DecisionHero: React.FC<DecisionHeroProps> = ({
 
           {/* Selection Reason Statement */}
           <div className="bg-[#16202C] border-l-2 border-l-blue-500 rounded-r-md p-4 text-xs sm:text-sm text-[#F3F5F7] leading-relaxed shadow-sm">
-            <span className="font-semibold text-blue-400 mr-2">Orchestration Decision:</span>
-            {decision?.selection_reason || 'Awaiting evaluation of payment scenario context...'}
+            <span className="font-semibold text-blue-400 mr-2">Orchestration Status:</span>
+            {decision?.selection_reason || 'Select a Quick Scenario below or enter custom parameters, then click Run Recommendation.'}
           </div>
         </div>
       )}

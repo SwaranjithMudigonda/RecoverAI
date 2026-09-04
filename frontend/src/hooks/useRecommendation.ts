@@ -1,11 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { fetchRecommendation } from '../lib/api';
 import { PRESETS } from '../data/presets';
 import type { PaymentContext, RecommendationResponse, RequestStatus } from '../types/recovery';
 
 export function useRecommendation() {
   const [context, setContext] = useState<PaymentContext>(PRESETS.soft);
-  const [activePreset, setActivePreset] = useState<string>('soft');
+  const [activePreset, setActivePreset] = useState<string>('');
   const [status, setStatus] = useState<RequestStatus>('IDLE');
   const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -42,11 +42,6 @@ export function useRecommendation() {
     setContext(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  // Initial load recommendation
-  useEffect(() => {
-    executeRecommendation();
-  }, [executeRecommendation]);
-
   return {
     context,
     setContext,
@@ -60,3 +55,4 @@ export function useRecommendation() {
     executeRecommendation
   };
 }
+

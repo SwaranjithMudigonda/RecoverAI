@@ -8,8 +8,27 @@ interface ActionComparisonProps {
 }
 
 export const ActionComparison: React.FC<ActionComparisonProps> = ({ recommendation, isError }) => {
-  const actions = recommendation?.actions;
-  const selectedAction = recommendation?.decision.selected_action;
+  if (isError || !recommendation) {
+    return (
+      <section id="action-comparison" className="bg-[#121820] border border-[#232D38] rounded-xl p-5 sm:p-6 space-y-4">
+        <div>
+          <h3 className="text-base font-bold text-[#F3F5F7]">
+            Alternative Actions Evaluation
+          </h3>
+          <p className="text-xs text-[#8C9BAE]">
+            Comparison of candidate recovery actions, calibrated probabilities & expected utilities
+          </p>
+        </div>
+        <p className="text-xs text-[#8C9BAE]">
+          Select a quick scenario or click Run Recommendation to compare all 4 candidate recovery actions.
+        </p>
+      </section>
+    );
+  }
+
+  const actions = recommendation.actions;
+  const selectedAction = recommendation.decision?.selected_action;
+
 
   const actionMeta: Record<
     ActionType,
